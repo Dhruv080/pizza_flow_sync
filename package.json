@@ -1,0 +1,16 @@
+{
+  "name": "pizzaflow-root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "dev": "npm --prefix web run dev",
+    "build": "npm --prefix web run build",
+    "start": "npm --prefix web run start",
+    "lint": "npm --prefix web run lint",
+    "db:setup": "npm --prefix web run db:setup",
+    "admin:create": "npm --prefix web run admin:create"
+  }
+}

@@ -57,5 +57,36 @@ export async function POST(request: Request) {
   const { error } = await admin.from("orders").update(updateFields).eq("id", orderId);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  if (updateFields.status === "paid") {
+    let tableNumber = updateFields.table_number;
+    if (tableNumber === undefined || tableNumber === null) {
+      const { data: orderData } = await admin
+        .from("orders")
+        .select("table_number")
+        .eq("id", orderId)
+        .maybeSingle();
+      if (orderData?.table_number) {
+        tableNumber = orderData.table_number;
+      }
+    }
+
+    if (tableNumber) {
+      const tableNum = Number(tableNumber);
+      if (!isNaN(tableNum)) {
+        await admin
+          .from("dine_in_tables")
+          .update({
+            status: "vacant",
+            customer_name: null,
+            group_size: null,
+            seated_at: null,
+            offer_tier: null,
+            offer_incentive: null,
+          })
+          .eq("table_number", tableNum);
+      }
+    }
+  }
+
   return NextResponse.json({ ok: true });
 }
